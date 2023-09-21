@@ -3,7 +3,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OpenLayer</title>
-
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="./styles.css" />
     <!-- Openlayer Style -->
     <link rel="stylesheet" href="./libs/ol-v7.4.0/ol.css" />
     <!-- Openlayer Extension Style -->
@@ -13,8 +14,6 @@
       rel="stylesheet"
       href="./libs/bootstrap-5.0.2-dist/css/bootstrap.css"
     />
-    <!-- Custom Style -->
-    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <!-- Navigation Tab -->
@@ -87,6 +86,10 @@
 
     <!-- Map Div -->
     <div id="js-map" class="map"></div>
+    <!-- Pop-Up container -->
+    <div id="popup-container">
+      <p id="popup-coordinates"></p>
+    </div>
 
     <!-- Adding OpenLayer library -->
     <script src="./libs/ol-v7.4.0/dist/ol.js"></script>
