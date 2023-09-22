@@ -14,3 +14,24 @@ For a map to render you need at minimum 3 things:
 - View
 - Layers
 - Target Container
+
+Key concepts in OpenLayers
+
+- Map
+  - View
+  - Layer
+  - Overlay
+  - Interaction
+  - Controls
+
+Layers in OpenLayers
+
+- BaseLayer
+
+  - Layer
+
+    - BaseImageLayer
+    - BaseTileLayer
+    - BaseVectorLayer
+
+  - LayerGroup
