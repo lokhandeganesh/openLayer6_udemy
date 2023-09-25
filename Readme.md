@@ -35,3 +35,20 @@ Layers in OpenLayers
     - BaseVectorLayer
 
   - LayerGroup
+
+Source of Layer in OpenLayers
+
+- Sources
+  - Tile Source
+    - UTF Grid (Tile JSOM format (MapBox))
+    - URL Tile (HTRP request)
+      - Tile Image
+        - Bing Maps
+        - XYZ
+          - CartoDB
+          - OSM
+          - Stamen
+          - TileDebug
+      - Vector Tile
+  - Image Source
+  - Vector Source

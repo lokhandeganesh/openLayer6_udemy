@@ -36,7 +36,7 @@ function init() {
         visible: false,
       })
     ],
-    target: '-map',
+    target: 'js-map',
     KeyboardEventTarget: document,
     // change of expression in V7
     controls: ol.control.defaults.defaults({
@@ -56,8 +56,17 @@ function init() {
           url: 'http://{a-c}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'
         }),
         zIndex: 0,
-        visible: true,
+        visible: false,
         extent: extent,
+      }),
+      // Bing Maps Base Layer
+      new ol.layer.Tile({
+        source: new ol.source.BingMaps({
+          key: 'AoIRFyUI6p_bKWn-cA4QNwijjpNbVMSR4mbiJHc2FLtR60jUS7Zef30xmrs-IQOy',
+          imagerySet: 'Road'
+          //AerialWithLabels, Road, CanvasDark,Ordnane
+        }),
+        visible: true
       })
     ]
   });
@@ -82,13 +91,13 @@ function init() {
   // adding Interactions
   const dragRotateInteraction = new ol.interaction.DragRotate({
     condition: ol.events.condition.altKeyOnly
-  })
+  });
   Map.addInteraction(dragRotateInteraction);
 
   // adding Draw interaction
   const drawInteraction = new ol.interaction.Draw({
     type: 'Polygon'
-  })
+  });
   // Map.addInteraction(drawInteraction);
 
   drawInteraction.on('drawend', function (evt) {
@@ -98,12 +107,11 @@ function init() {
     console.log(drawnFeatures);
 
     // Map.addLayer(drawnFeatures);
-  })
+  });
 
-
-
+  // Select PopUp control
   const SelectPopup = new ol.control.SelectPopup({
-  })
+  });
   // Map.addControl(SelectPopup);
 
   // GeoJson Layer of NRM Project(PoCRA) Points
@@ -111,17 +119,18 @@ function init() {
     url: "http://gis.mahapocra.gov.in/geoserver/PoCRA_Dashboard_V2/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=PoCRA_Dashboard_V2%3Anrm_point_data_pocra_structures&outputFormat=application%2Fjson",
     projection: 'EPSG:4326',
     format: new ol.format.GeoJSON(),
-  })
+  });
 
   // Adding Layer to Map
   Map.addLayer(new ol.layer.Vector({
     name: 'NRM Project Locations',
     source: nrmProjectVectorSource,
     visible: true,
-  }))
+  }));
+
+  // Select Control on Map
   const SelectCtl = new ol.control.Select({
     source: nrmProjectVectorSource,
-    // property: $(".options select").val()
   });
   Map.addControl(SelectCtl);
   SelectCtl.on('select', function (evt) {
