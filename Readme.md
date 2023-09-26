@@ -39,6 +39,7 @@ Layers in OpenLayers
 Source of Layer in OpenLayers
 
 - Sources
+
   - Tile Source
     - UTF Grid (Tile JSOM format (MapBox))
     - URL Tile (HTRP request)
@@ -49,6 +50,11 @@ Source of Layer in OpenLayers
           - OSM
           - Stamen
           - TileDebug
+        - TileArc GISRest
+        - Tile WMS (Web Map Service)
+        - WMTS
+        - Zoomify
+        - IIIF
       - Vector Tile
   - Image Source
   - Vector Source

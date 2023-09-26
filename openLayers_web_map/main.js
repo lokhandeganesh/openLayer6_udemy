@@ -1,5 +1,6 @@
 window.onload = init
 
+
 function init() {
   // adding Controls
   // Search by attributes of layer
@@ -16,6 +17,10 @@ function init() {
       })
     ],
   });
+  // 
+  const attributionControl = new ol.control.Attribution({
+    collapsible: true,
+  })
 
   // Initiating Map
   const extent = [66.41, 7.25, 99.35, 36.9];
@@ -41,11 +46,11 @@ function init() {
     // change of expression in V7
     controls: ol.control.defaults.defaults({
       zoom: true,
-      attribution: true,
+      attribution: false,
       rotate: false
     })
       // Adding new external controls on map
-      .extend([SearchFeature, overViewMapControl]),
+      .extend([SearchFeature, overViewMapControl, attributionControl]),
   })
 
   // LayerGroups
@@ -81,7 +86,7 @@ function init() {
   Map.on('click', function (evt) {
     // console.log(evt.coordinate);
     const clickedCoordinate = evt.coordinate;
-    console.log(clickedCoordinate)
+    // console.log(clickedCoordinate)
 
     popup.setPosition(undefined);
     popup.setPosition(clickedCoordinate);
@@ -121,12 +126,36 @@ function init() {
     format: new ol.format.GeoJSON(),
   });
 
-  // Adding Layer to Map
-  Map.addLayer(new ol.layer.Vector({
+  const nrmProjectVector = new ol.layer.Vector({
     name: 'NRM Project Locations',
     source: nrmProjectVectorSource,
+    visible: false,
+  });
+
+  // Adding Layer to Map
+  Map.addLayer(nrmProjectVector);
+
+  // Manupulation of layer properties
+  // setAttributions
+  nrmProjectVector.getSource().setAttributions('<a>@ManualAttr.com</a>');
+  // console.log(nrmProjectVector.getKeys());
+  nrmProjectVector.set('maxZoom', 9);
+
+  // Project District Vector Layer
+  const mh_districtSource = new ol.source.Vector({
+    url: "./data/mh_district.json",
+    projection: 'EPSG:4326',
+    format: new ol.format.GeoJSON(),
+  });
+
+  const mh_districtVector = new ol.layer.Vector({
+    name: 'mh_district',
+    source: mh_districtSource,
     visible: true,
-  }));
+  });
+
+  // Adding Layer to Map
+  Map.addLayer(mh_districtVector);
 
   // Select Control on Map
   const SelectCtl = new ol.control.Select({
