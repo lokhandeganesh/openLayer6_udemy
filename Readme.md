@@ -57,4 +57,10 @@ Source of Layer in OpenLayers
         - IIIF
       - Vector Tile
   - Image Source
+    - Image ArcGIS Rest
+    - Image Canvas Source
+    - Image Map Guide
+    - Image Static
+    - Image WMS
+    - Raster Source
   - Vector Source

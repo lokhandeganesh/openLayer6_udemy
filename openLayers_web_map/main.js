@@ -157,6 +157,22 @@ function init() {
   // Adding Layer to Map
   Map.addLayer(mh_districtVector);
 
+
+  // 
+  const mh_districtTile = new ol.source.TileJSON({
+    url: "http://localhost:3000/mh_district?f=tilegeojson",
+    crossOrigin: 'anonymous',
+  });
+
+  const mh_districMVT = new ol.layer.Tile({
+    name: 'mh_district',
+    source: mh_districtTile,
+    visible: false,
+  });
+
+  // Adding Layer to Map
+  // Map.addLayer(mh_districMVT);
+
   // Select Control on Map
   const SelectCtl = new ol.control.Select({
     source: nrmProjectVectorSource,
