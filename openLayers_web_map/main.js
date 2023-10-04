@@ -22,12 +22,15 @@ function init() {
     collapsible: true,
   })
 
+  // 
+
+
   // Initiating Map
-  const extent = [66.41, 7.25, 99.35, 36.9];
+  const extent = [72, 15, 82, 23];
 
   const Map = new ol.Map({
     view: new ol.View({
-      center: [76.34, 19.61], // X,Y
+      center: [76, 20], // X,Y
       zoom: 6.5,
       // rotation: 0.1,
       projection: 'EPSG:4326',
@@ -83,15 +86,16 @@ function init() {
     element: popupContainerElement
   });
   // Map.addOverlay(popup);
-  Map.on('click', function (evt) {
-    // console.log(evt.coordinate);
-    const clickedCoordinate = evt.coordinate;
-    // console.log(clickedCoordinate)
+  // Map.on('click', function (evt) {
 
-    popup.setPosition(undefined);
-    popup.setPosition(clickedCoordinate);
-    popupContainerElement.innerHTML = clickedCoordinate
-  });
+  //   // console.log(evt.coordinate);    
+  //   // const clickedCoordinate = evt.coordinate;
+  //   // console.log(clickedCoordinate)
+
+  //   popup.setPosition(undefined);
+  //   popup.setPosition(clickedCoordinate);
+  //   popupContainerElement.innerHTML = clickedCoordinate
+  // });
 
   // adding Interactions
   const dragRotateInteraction = new ol.interaction.DragRotate({
@@ -110,7 +114,6 @@ function init() {
     let parser = new ol.format.GeoJSON();
     let drawnFeatures = parser.writeFeatures([evt.feature]); //parser.writeFeaturesObject([evt.feature]);
     console.log(drawnFeatures);
-
     // Map.addLayer(drawnFeatures);
   });
 
@@ -148,17 +151,132 @@ function init() {
     format: new ol.format.GeoJSON(),
   });
 
+  // const mh_districtVector = new ol.layer.VectorImage({
+  // for faster rendering during interaction and animations, at the cost of less accurate rendering.
   const mh_districtVector = new ol.layer.Vector({
     name: 'mh_district',
     source: mh_districtSource,
     visible: true,
+    style: function (f) {
+      // console.log(f)
+      (f.get('is_pocra') === 1)
+        ? color = [255, 128, 0, 0.8]
+        : color = [105, 105, 105, 0.8]
+
+      return new ol.style.Style({
+        text: new ol.style.Text({
+          text: f.get('dtmname'), //.toString(),
+          font: 'bold 18px sans-serif',
+          fill: new ol.style.Fill({
+            color: '#fff'
+          })
+        }),
+        stroke: new ol.style.Stroke({
+          width: 1,
+          color: [255, 255, 255, 1],
+          lineDash: [4, 8],
+          lineCap: 'round',
+
+        }),
+        fill: new ol.style.Fill({
+          color: color
+        })
+      })
+    }
   });
 
   // Adding Layer to Map
   Map.addLayer(mh_districtVector);
 
+  /* 
+    // Overlay (Display an overlay with a content on the map)
+    var menu = new ol.control.Overlay({
+      closeBox: true,
+      className: "slide-left menu",
+      content: $("#menu").get(0)
+    });
+    Map.addControl(menu);
+  
+    // Toggle control to show/hide the menu
+    var tog = new ol.control.Toggle({
+      html: '<i class="fa fa-bars"></i>',
+      className: 'menu',
+      title: "Menu",
+      onToggle: function () { menu.toggle(); }
+    });
+    Map.addControl(tog);
+  */
 
-  // 
+  // Adding SelectInteraction on Map to District Layer
+  var selectIn = new ol.interaction.Select({
+    hitTolerance: 5,
+    condition: ol.events.condition.singleClick
+  });
+
+  // Vector features can be Selected on MouseClick
+  // Map.addInteraction(selectIn);
+  Map.getInteractions().extend([selectIn]);
+
+  // Select Feature When event occurs, possible event can be one of the below
+  // [DblClickDragZoom, DoubleClickZoom, DragAndDrop, KeyboardPan,
+  //   KeyboardZoom, Link, MouseWheelZoom, PointerInteraction, Select
+  // ]
+
+  // Displaying and Accessing feature on Select event.
+  var displayFeatureInfo = function (pixel) {
+    var features = [];
+    Map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+      // console.log(feature);
+      features.push(feature);
+    });
+    var container = document.getElementById('information');
+    if (features.length > 0) {
+      var info = [];
+      for (var i = 0, length = features.length; i < length; ++i) {
+        info.push(features[i].get('dtmname'));
+      }
+      container.innerHTML = info.join(', ') || '(unknown)';
+    } else {
+      container.innerHTML = '&nbsp;';
+    }
+  };
+
+
+  selectIn.on('select', function (evt) {
+    // console.log(evt)
+    var pixel = evt.mapBrowserEvent.pixel;
+    // Passing value to function
+    displayFeatureInfo(pixel);
+    // OR
+
+    // Selection of features
+    var feature = evt.selected[0];
+    // console.log(feature)
+    if (feature) {
+      var prop = feature.getProperties();
+      // console.log(prop['dtncode']);
+    }
+  })
+
+
+  /*
+   // On selected => show/hide popup
+   selectIn.getFeatures().on('add', function (e) {
+     var feature = e.element;
+     // var img = $("<img>").attr("src", feature.get("img"));
+     var info = $("<div>").append($("<p>").text(feature.get("dtncode")));
+     var content = $("<div>")
+       // .append( img )
+       .append(info);
+     $(".data").html(content);
+   });
+   selectIn.getFeatures().on('remove', function (e) {
+     $(".data").html("");
+   });
+  */
+
+  // Tile Json of Vector 
+  /* 
   const mh_districtTile = new ol.source.TileJSON({
     url: "http://localhost:3000/mh_district?f=tilegeojson",
     crossOrigin: 'anonymous',
@@ -169,18 +287,28 @@ function init() {
     source: mh_districtTile,
     visible: false,
   });
+*/
 
   // Adding Layer to Map
   // Map.addLayer(mh_districMVT);
 
-  // Select Control on Map
+
+  // Select (by Attributes) Control on Map
   const SelectCtl = new ol.control.Select({
-    source: nrmProjectVectorSource,
+    source: mh_districtSource,
   });
+  // 
   Map.addControl(SelectCtl);
   SelectCtl.on('select', function (evt) {
     console.log(evt)
   })
+
+  // Changing Cursor Style When feature is present on Map
+  Map.on('pointermove', function (e) {
+    var pixel = Map.getEventPixel(e.originalEvent);
+    var hit = Map.hasFeatureAtPixel(pixel);
+    Map.getViewport().style.cursor = hit ? 'pointer' : '';
+  });
 
   // Print control
   var printControl = new ol.control.PrintDialog({

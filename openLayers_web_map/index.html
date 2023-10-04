@@ -15,15 +15,65 @@
     <!-- Openlayer Extension Style -->
     <link rel="stylesheet" href="./libs/ol-ext/ol-ext.css" />
     <!-- font awesome -->
-    <link
-      rel="stylesheet"
-      href="./libs/font-awesome/font-awesome_6.4.2_css_all.min.css"
-    />
+    <link rel="stylesheet" href="./css/all_font-awesome.min.css" />
+
     <!-- Bootstrap 5 Style -->
     <link
       rel="stylesheet"
       href="./libs/bootstrap-5.0.2-dist/css/bootstrap.css"
     />
+    <!-- Over-wrighting default style -->
+    <!-- 
+    <style>
+      .ol-overlay.menu {
+        width: 30%;
+        background: #fff;
+        color: #333;
+        box-shadow: 0px 0px 5px #000;
+        padding: 0.5em;
+        -webkit-transition: all 0.25s;
+        transition: all 0.25s;
+      }
+      /* style the close box */
+      .ol-overlay.menu .ol-closebox {
+        left: 1em;
+        top: 0.5em;
+      }
+      .ol-overlay.menu .ol-closebox:before {
+        content: "\f0c9";
+        font-family: FontAwesome;
+      }
+      #menu {
+        padding-top: 1.5em;
+        font-size: 1em;
+      }
+      /* menu button */
+      .ol-control.menu {
+        top: 0.5em;
+        left: 0.5em;
+      }
+      .ol-zoom {
+        left: auto;
+        right: 0.5em;
+      }
+      .ol-rotate {
+        right: 3em;
+      }
+      .ol-touch .ol-rotate {
+        right: 3.5em;
+      }
+      /**/
+      .ol-overlay img {
+        max-width: 90%;
+      }
+      .data,
+      .data p {
+        margin: 0;
+        text-align: center;
+        font-size: 0.9em;
+      }
+    </style>
+     -->
   </head>
   <body>
     <!-- Navigation Tab -->
@@ -95,6 +145,7 @@
     </div>
 
     <!-- Map Div -->
+    <div id="information" class="text-center fs-1 fw-bold"></div>
     <div id="js-map" class="map"></div>
     <!-- Pop-Up container -->
     <div id="popup-container">
@@ -111,5 +162,6 @@
     <script src="./main.js"></script>
     <!--  -->
     <!-- <script src="./clusterMap.js"></script> -->
+    <!-- <script src="./menuOverlay.js"></script> -->
   </body>
 </html>
