@@ -22,8 +22,6 @@ function init() {
     collapsible: true,
   })
 
-  // 
-
 
   // Initiating Map
   const extent = [72, 15, 82, 23];
@@ -40,8 +38,8 @@ function init() {
     layers: [
       new ol.layer.Tile({
         source: new ol.source.OSM(),
-        zIndex: -1,
-        visible: true,
+        zIndex: 1,
+        visible: false,
       })
     ],
     target: 'js-map',
@@ -64,21 +62,21 @@ function init() {
           url: 'http://{a-c}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'
         }),
         zIndex: 0,
-        visible: false,
+        visible: true,
         extent: extent,
       }),
       // Bing Maps Base Layer
-      new ol.layer.Tile({
-        source: new ol.source.BingMaps({
-          key: 'AoIRFyUI6p_bKWn-cA4QNwijjpNbVMSR4mbiJHc2FLtR60jUS7Zef30xmrs-IQOy',
-          imagerySet: 'Road'
-          //AerialWithLabels, Road, CanvasDark,Ordnane
-        }),
-        visible: false,
-      })
+      // new ol.layer.Tile({
+      //   source: new ol.source.BingMaps({
+      //     key: 'AoIRFyUI6p_bKWn-cA4QNwijjpNbVMSR4mbiJHc2FLtR60jUS7Zef30xmrs-IQOy',
+      //     imagerySet: 'Road'
+      //     //AerialWithLabels, Road, CanvasDark,Ordnane
+      //   }),
+      //   visible: true
+      // })
     ]
   });
-  // Map.addLayer(layerGroup);
+  Map.addLayer(layerGroup);
 
   // adding Overlays
   const popupContainerElement = document.getElementById('popup-coordinates');
@@ -153,12 +151,29 @@ function init() {
 
     // defining custom style
     const style = new ol.style.Style({
-      image: new ol.style.Icon({
-        opacity: 1,
-        scale: .5,
-        src: src,
-        color: color,
-      }),
+      // image: new ol.style.Icon({
+      //   opacity: 1,
+      //   scale: .5,
+      //   src: src,
+      //   color: color,
+      // }),
+
+      // We can also use RegularShape style from ol
+      
+      image: new ol.style.RegularShape({
+        fill: new ol.style.Fill({
+          color: [255,255,0]
+        }),
+        stroke: new ol.style.Stroke({
+          color: [255,0,0,0.5],
+          width: 1.2
+        }),
+        points: 5,
+        radius: 10,
+        // star
+        radius2: 4,
+        angle: 0,
+      })
     });
 
     return style
@@ -171,7 +186,7 @@ function init() {
   });
 
   // Adding Layer to Map
-  // Map.addLayer(nrmProjectVector);
+  Map.addLayer(nrmProjectVector);
 
   // Manupulation of layer properties
   // setAttributions
@@ -224,7 +239,127 @@ function init() {
   // Adding Layer to Map
   Map.addLayer(mh_districtVector);
 
-  // Select Control on Map
+  /* 
+    // Overlay (Display an overlay with a content on the map)
+    var menu = new ol.control.Overlay({
+      closeBox: true,
+      className: "slide-left menu",
+      content: $("#menu").get(0)
+    });
+    Map.addControl(menu);
+   
+    // Toggle control to show/hide the menu
+    var tog = new ol.control.Toggle({
+      html: '<i class="fa fa-bars"></i>',
+      className: 'menu',
+      title: "Menu",
+      onToggle: function () { menu.toggle(); }
+    });
+    Map.addControl(tog);
+  */
+
+  // Adding SelectInteraction on Map to District Layer
+  var selectIn = new ol.interaction.Select({
+    // hitTolerance: 5,
+    condition: ol.events.condition.singleClick
+    // condition: ol.events.condition.pointerMove
+  });
+
+  // Vector features can be Selected on MouseClick
+  // Map.addInteraction(selectIn);
+  Map.getInteractions().extend([selectIn]);
+
+  // Select Feature When event occurs, possible event can be one of the below
+  // [DblClickDragZoom, DoubleClickZoom, DragAndDrop, KeyboardPan,
+  //   KeyboardZoom, Link, MouseWheelZoom, PointerInteraction, Select
+  // ]
+
+  // Displaying and Accessing feature on Select event.
+  var displayFeatureInfo = function (pixel) {
+    var features = [];
+
+    Map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+      // console.log(layer.get("name"));
+      features.push(feature);
+
+      // Displaying District information
+      if (layer.get("name") === 'mh_district') {
+        var container = document.getElementById('information');
+        // 
+        if (features.length > 0) {
+          var info = [];
+          for (var i = 0, length = features.length; i < length; ++i) {
+            info.push(features[i].get('dtmname'));
+          }
+          container.innerHTML = info.join(', ') || '(unknown)';
+        } else {
+          container.innerHTML = '&nbsp;';
+        }
+      }
+    },
+      // filtering layers according to its properties
+      // {
+      //   layerFilter: function (layerCandidate) {
+      //     // console.log(layerCandidate.get("name"));
+      //     return layerCandidate.get("name") === "mh_district"
+      //   }
+      // }
+    );
+  };
+
+
+  selectIn.on('select', function (evt) {
+    // console.log(evt)
+    var pixel = evt.mapBrowserEvent.pixel;
+    // Passing value to function
+    displayFeatureInfo(pixel);
+    // OR
+
+    // Selection of features
+    var feature = evt.selected[0];
+    // console.log(feature)
+    if (feature) {
+      var prop = feature.getProperties();
+      // console.log(prop['dtncode']);
+    }
+  })
+
+
+  /*
+   // On selected => show/hide popup
+   selectIn.getFeatures().on('add', function (e) {
+     var feature = e.element;
+     // var img = $("<img>").attr("src", feature.get("img"));
+     var info = $("<div>").append($("<p>").text(feature.get("dtncode")));
+     var content = $("<div>")
+       // .append( img )
+       .append(info);
+     $(".data").html(content);
+   });
+   selectIn.getFeatures().on('remove', function (e) {
+     $(".data").html("");
+   });
+  */
+
+  // Tile Json of Vector 
+  /* 
+  const mh_districtTile = new ol.source.TileJSON({
+    url: "http://localhost:3000/mh_district?f=tilegeojson",
+    crossOrigin: 'anonymous',
+  });
+  
+  const mh_districMVT = new ol.layer.Tile({
+    name: 'mh_district',
+    source: mh_districtTile,
+    visible: false,
+  });
+  */
+
+  // Adding Layer to Map
+  // Map.addLayer(mh_districMVT);
+
+
+  // Select (by Attributes) Control on Map
   const SelectCtl = new ol.control.Select({
     source: mh_districtSource,
   });
