@@ -22,12 +22,15 @@ function init() {
     collapsible: true,
   })
 
+  // 
+
+
   // Initiating Map
-  const extent = [66.41, 7.25, 99.35, 36.9];
+  const extent = [72, 15, 82, 23];
 
   const Map = new ol.Map({
     view: new ol.View({
-      center: [76.34, 19.61], // X,Y
+      center: [76, 20], // X,Y
       zoom: 6.5,
       // rotation: 0.1,
       projection: 'EPSG:4326',
@@ -83,15 +86,16 @@ function init() {
     element: popupContainerElement
   });
   // Map.addOverlay(popup);
-  Map.on('click', function (evt) {
-    // console.log(evt.coordinate);
-    const clickedCoordinate = evt.coordinate;
-    // console.log(clickedCoordinate)
+  // Map.on('click', function (evt) {
 
-    popup.setPosition(undefined);
-    popup.setPosition(clickedCoordinate);
-    popupContainerElement.innerHTML = clickedCoordinate
-  });
+  //   // console.log(evt.coordinate);    
+  //   // const clickedCoordinate = evt.coordinate;
+  //   // console.log(clickedCoordinate)
+
+  //   popup.setPosition(undefined);
+  //   popup.setPosition(clickedCoordinate);
+  //   popupContainerElement.innerHTML = clickedCoordinate
+  // });
 
   // adding Interactions
   const dragRotateInteraction = new ol.interaction.DragRotate({
@@ -110,7 +114,6 @@ function init() {
     let parser = new ol.format.GeoJSON();
     let drawnFeatures = parser.writeFeatures([evt.feature]); //parser.writeFeaturesObject([evt.feature]);
     console.log(drawnFeatures);
-
     // Map.addLayer(drawnFeatures);
   });
 
@@ -126,10 +129,45 @@ function init() {
     format: new ol.format.GeoJSON(),
   });
 
+  const nrmProjectLocStyle = (feature) => {
+    // console.log(feature);
+
+    // "activity_name", "activity_code", "structure_type"
+    // "Construction of Earthen Nala Bunds",	"A3.2.2",	"ENB"
+    // "Gabian Structure",	"A3.2.4",	"GB"
+    // "Construction of Cement Nala Bunds",	"A3.2.3",	"CNB"
+    // "Recharge Shaft",	"A3.2.6",	"RS"
+    // "Desilting of old water storage structure",	"A3.4.1",	"DeSWS"
+    // "Construction of Loose bolder Structures",	"A3.2.1",	"LBS"
+    // "Recharge Shaft with Recharge Trench",	"A3.2.7",	"RST"
+    // "Composite Gabian Structure-RC Pardi",	"A3.2.8",	"GB"
+    // "INDIVIDUAL FARM POND-BJS",	"A3.3.6",	"FP-I"
+
+    var structure_type = feature.get("structure_type");
+    // dynamic icon & color depending upon properties
+    (structure_type === 'DeSWS')
+      ? (src = './assets/icon/icon.svg', color = [255, 0, 0])
+      : structure_type === 'CNB'
+        ? (src = './assets/icon/icon.svg', color = [0, 255, 0])
+        : (src = './assets/icon/icon_copy.svg', color = [0, 0, 255]);
+
+    // defining custom style
+    const style = new ol.style.Style({
+      image: new ol.style.Icon({
+        opacity: 1,
+        scale: .5,
+        src: src,
+        color: color,
+      }),
+    });
+
+    return style
+  };
   const nrmProjectVector = new ol.layer.Vector({
     name: 'NRM Project Locations',
     source: nrmProjectVectorSource,
-    visible: false,
+    visible: true,
+    style: nrmProjectLocStyle,
   });
 
   // Adding Layer to Map
@@ -139,48 +177,69 @@ function init() {
   // setAttributions
   nrmProjectVector.getSource().setAttributions('<a>@ManualAttr.com</a>');
   // console.log(nrmProjectVector.getKeys());
-  nrmProjectVector.set('maxZoom', 9);
+  // nrmProjectVector.set('maxZoom', 9);
 
   // Project District Vector Layer
   const mh_districtSource = new ol.source.Vector({
-    url: "./data/mh_district.json",
+    url: "./assets/data/mh_district.json",
     projection: 'EPSG:4326',
     format: new ol.format.GeoJSON(),
   });
 
+  // Custom Style for District Vector layer
+  const mh_districtVectorStyle = (feature) => {
+    // console.log(feature);    
+    (feature.get('is_pocra') === 1)
+      ? color = [255, 128, 0, 0.8] // for Project District
+      : color = [105, 105, 105, 0.8] // for Non-Project District
+
+    return new ol.style.Style({
+      text: new ol.style.Text({
+        text: feature.get('dtmname'), //.toString(),
+        font: 'bold 18px sans-serif',
+        fill: new ol.style.Fill({
+          color: '#fff'
+        })
+      }),
+      stroke: new ol.style.Stroke({
+        width: 1,
+        color: [255, 255, 255, 1],
+        lineDash: [5, 8],
+        lineCap: 'round',
+      }),
+      fill: new ol.style.Fill({
+        color: color
+      })
+    })
+  };
+  // const mh_districtVector = new ol.layer.VectorImage({
+  // for faster rendering during interaction and animations, at the cost of less accurate rendering.
   const mh_districtVector = new ol.layer.Vector({
     name: 'mh_district',
     source: mh_districtSource,
-    visible: true,
+    visible: false,
+    style: mh_districtVectorStyle,
   });
 
   // Adding Layer to Map
   Map.addLayer(mh_districtVector);
 
-
-  // 
-  const mh_districtTile = new ol.source.TileJSON({
-    url: "http://localhost:3000/mh_district?f=tilegeojson",
-    crossOrigin: 'anonymous',
-  });
-
-  const mh_districMVT = new ol.layer.Tile({
-    name: 'mh_district',
-    source: mh_districtTile,
-    visible: false,
-  });
-
-  // Adding Layer to Map
-  // Map.addLayer(mh_districMVT);
-
   // Select Control on Map
   const SelectCtl = new ol.control.Select({
-    source: nrmProjectVectorSource,
+    source: mh_districtSource,
   });
+  // 
   Map.addControl(SelectCtl);
   SelectCtl.on('select', function (evt) {
     console.log(evt)
   })
+
+  // Changing Cursor Style When feature is present on Map
+  Map.on('pointermove', function (e) {
+    var pixel = Map.getEventPixel(e.originalEvent);
+    var hit = Map.hasFeatureAtPixel(pixel);
+    Map.getViewport().style.cursor = hit ? 'pointer' : '';
+  });
 
   // Print control
   var printControl = new ol.control.PrintDialog({
