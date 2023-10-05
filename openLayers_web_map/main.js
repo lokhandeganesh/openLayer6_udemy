@@ -147,35 +147,36 @@ function init() {
       ? (src = './assets/icon/icon.svg', color = [255, 0, 0])
       : structure_type === 'CNB'
         ? (src = './assets/icon/icon.svg', color = [0, 255, 0])
-        : (src = './assets/icon/icon_copy.svg', color = [0, 0, 255]);
+        : (src = './assets/icon/dots.svg', color = [0, 0, 255, 0.5]);
 
     // defining custom style
     const style = new ol.style.Style({
-      // image: new ol.style.Icon({
-      //   opacity: 1,
-      //   scale: .5,
-      //   src: src,
-      //   color: color,
-      // }),
+      image: new ol.style.Icon({
+        opacity: 1,
+        scale: .5,
+        src: src,
+        color: color,
+      }),
+      
 
       // We can also use RegularShape style from ol
-      
-      image: new ol.style.RegularShape({
-        fill: new ol.style.Fill({
-          color: [255,255,0]
-        }),
-        stroke: new ol.style.Stroke({
-          color: [255,0,0,0.5],
-          width: 1.2
-        }),
-        points: 5,
-        radius: 10,
-        // star
-        radius2: 4,
-        angle: 0,
-      })
-    });
 
+      // image: new ol.style.RegularShape({
+      //   fill: new ol.style.Fill({
+      //     color: [255,255,0]
+      //   }),
+      //   stroke: new ol.style.Stroke({
+      //     color: [255,0,0,0.5],
+      //     width: 1.2
+      //   }),
+      //   points: 5,
+      //   radius: 10,
+      //   // star
+      //   radius2: 4,
+      //   angle: 0,
+      // })
+    });
+    
     return style
   };
   const nrmProjectVector = new ol.layer.Vector({
@@ -185,6 +186,7 @@ function init() {
     style: nrmProjectLocStyle,
   });
 
+  
   // Adding Layer to Map
   Map.addLayer(nrmProjectVector);
 
@@ -279,7 +281,7 @@ function init() {
     var features = [];
 
     Map.forEachFeatureAtPixel(pixel, function (feature, layer) {
-      // console.log(layer.get("name"));
+      // console.log(layer.get("name"));      
       features.push(feature);
 
       // Displaying District information
