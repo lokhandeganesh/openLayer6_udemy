@@ -132,7 +132,7 @@ function init() {
   const nrmProjectVector = new ol.layer.Vector({
     name: 'NRM Project Locations',
     source: nrmProjectVectorSource,
-    visible: false,
+    visible: true,
   });
 
   // Adding Layer to Map
@@ -209,8 +209,9 @@ function init() {
 
   // Adding SelectInteraction on Map to District Layer
   var selectIn = new ol.interaction.Select({
-    hitTolerance: 5,
+    // hitTolerance: 5,
     condition: ol.events.condition.singleClick
+    // condition: ol.events.condition.pointerMove
   });
 
   // Vector features can be Selected on MouseClick
@@ -228,7 +229,16 @@ function init() {
     Map.forEachFeatureAtPixel(pixel, function (feature, layer) {
       // console.log(feature);
       features.push(feature);
-    });
+    },
+      // filtering layers according to its properties
+      {
+        layerFilter: function (layerCandidate) {
+          // console.log(layerCandidate.get("name"));
+          return layerCandidate.get("name") === "mh_district"
+        }
+      }
+    );
+
     var container = document.getElementById('information');
     if (features.length > 0) {
       var info = [];
