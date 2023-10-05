@@ -37,8 +37,8 @@ function init() {
     layers: [
       new ol.layer.Tile({
         source: new ol.source.OSM(),
-        zIndex: 1,
-        visible: false,
+        zIndex: -1,
+        visible: true,
       })
     ],
     target: 'js-map',
@@ -71,11 +71,11 @@ function init() {
           imagerySet: 'Road'
           //AerialWithLabels, Road, CanvasDark,Ordnane
         }),
-        visible: true
+        visible: false,
       })
     ]
   });
-  Map.addLayer(layerGroup);
+  // Map.addLayer(layerGroup);
 
   // adding Overlays
   const popupContainerElement = document.getElementById('popup-coordinates');
@@ -133,7 +133,7 @@ function init() {
   });
 
   // Adding Layer to Map
-  Map.addLayer(nrmProjectVector);
+  // Map.addLayer(nrmProjectVector);
 
   // Manupulation of layer properties
   // setAttributions
@@ -156,6 +156,22 @@ function init() {
 
   // Adding Layer to Map
   Map.addLayer(mh_districtVector);
+
+
+  // 
+  const mh_districtTile = new ol.source.TileJSON({
+    url: "http://localhost:3000/mh_district?f=tilegeojson",
+    crossOrigin: 'anonymous',
+  });
+
+  const mh_districMVT = new ol.layer.Tile({
+    name: 'mh_district',
+    source: mh_districtTile,
+    visible: false,
+  });
+
+  // Adding Layer to Map
+  // Map.addLayer(mh_districMVT);
 
   // Select Control on Map
   const SelectCtl = new ol.control.Select({

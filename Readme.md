@@ -29,7 +29,6 @@ Layers in OpenLayers
 - BaseLayer
 
   - Layer
-
     - BaseImageLayer
     - BaseTileLayer
     - BaseVectorLayer
@@ -39,7 +38,6 @@ Layers in OpenLayers
 Source of Layer in OpenLayers
 
 - Sources
-
   - Tile Source
     - UTF Grid (Tile JSOM format (MapBox))
     - URL Tile (HTRP request)
@@ -57,4 +55,15 @@ Source of Layer in OpenLayers
         - IIIF
       - Vector Tile
   - Image Source
+    - Image ArcGIS Rest
+    - Image Canvas Source
+    - Image Map Guide
+    - Image Static
+    - Image WMS
+    - Raster Source
   - Vector Source
+
+- Base Vector Layer
+  - Vector Tile Layer
+  - Vector Image Layer
+  - Vector Layer
