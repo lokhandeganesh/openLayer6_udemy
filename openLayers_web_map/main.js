@@ -129,10 +129,45 @@ function init() {
     format: new ol.format.GeoJSON(),
   });
 
+  const nrmProjectLocStyle = (feature) => {
+    // console.log(feature);
+
+    // "activity_name", "activity_code", "structure_type"
+    // "Construction of Earthen Nala Bunds",	"A3.2.2",	"ENB"
+    // "Gabian Structure",	"A3.2.4",	"GB"
+    // "Construction of Cement Nala Bunds",	"A3.2.3",	"CNB"
+    // "Recharge Shaft",	"A3.2.6",	"RS"
+    // "Desilting of old water storage structure",	"A3.4.1",	"DeSWS"
+    // "Construction of Loose bolder Structures",	"A3.2.1",	"LBS"
+    // "Recharge Shaft with Recharge Trench",	"A3.2.7",	"RST"
+    // "Composite Gabian Structure-RC Pardi",	"A3.2.8",	"GB"
+    // "INDIVIDUAL FARM POND-BJS",	"A3.3.6",	"FP-I"
+
+    var structure_type = feature.get("structure_type");
+    // dynamic icon & color depending upon properties
+    (structure_type === 'DeSWS')
+      ? (src = './assets/icon/icon.svg', color = [255, 0, 0])
+      : structure_type === 'CNB'
+        ? (src = './assets/icon/icon.svg', color = [0, 255, 0])
+        : (src = './assets/icon/icon_copy.svg', color = [0, 0, 255]);
+
+    // defining custom style
+    const style = new ol.style.Style({
+      image: new ol.style.Icon({
+        opacity: 1,
+        scale: .5,
+        src: src,
+        color: color,
+      }),
+    });
+
+    return style
+  };
   const nrmProjectVector = new ol.layer.Vector({
     name: 'NRM Project Locations',
     source: nrmProjectVectorSource,
     visible: true,
+    style: nrmProjectLocStyle,
   });
 
   // Adding Layer to Map
@@ -142,47 +177,48 @@ function init() {
   // setAttributions
   nrmProjectVector.getSource().setAttributions('<a>@ManualAttr.com</a>');
   // console.log(nrmProjectVector.getKeys());
-  nrmProjectVector.set('maxZoom', 9);
+  // nrmProjectVector.set('maxZoom', 9);
 
   // Project District Vector Layer
   const mh_districtSource = new ol.source.Vector({
-    url: "./data/mh_district.json",
+    url: "./assets/data/mh_district.json",
     projection: 'EPSG:4326',
     format: new ol.format.GeoJSON(),
   });
 
+  // Custom Style for District Vector layer
+  const mh_districtVectorStyle = (feature) => {
+    // console.log(feature);    
+    (feature.get('is_pocra') === 1)
+      ? color = [255, 128, 0, 0.8] // for Project District
+      : color = [105, 105, 105, 0.8] // for Non-Project District
+
+    return new ol.style.Style({
+      text: new ol.style.Text({
+        text: feature.get('dtmname'), //.toString(),
+        font: 'bold 18px sans-serif',
+        fill: new ol.style.Fill({
+          color: '#fff'
+        })
+      }),
+      stroke: new ol.style.Stroke({
+        width: 1,
+        color: [255, 255, 255, 1],
+        lineDash: [5, 8],
+        lineCap: 'round',
+      }),
+      fill: new ol.style.Fill({
+        color: color
+      })
+    })
+  };
   // const mh_districtVector = new ol.layer.VectorImage({
   // for faster rendering during interaction and animations, at the cost of less accurate rendering.
   const mh_districtVector = new ol.layer.Vector({
     name: 'mh_district',
     source: mh_districtSource,
-    visible: true,
-    style: function (f) {
-      // console.log(f)
-      (f.get('is_pocra') === 1)
-        ? color = [255, 128, 0, 0.8]
-        : color = [105, 105, 105, 0.8]
-
-      return new ol.style.Style({
-        text: new ol.style.Text({
-          text: f.get('dtmname'), //.toString(),
-          font: 'bold 18px sans-serif',
-          fill: new ol.style.Fill({
-            color: '#fff'
-          })
-        }),
-        stroke: new ol.style.Stroke({
-          width: 1,
-          color: [255, 255, 255, 1],
-          lineDash: [4, 8],
-          lineCap: 'round',
-
-        }),
-        fill: new ol.style.Fill({
-          color: color
-        })
-      })
-    }
+    visible: false,
+    style: mh_districtVectorStyle,
   });
 
   // Adding Layer to Map
@@ -196,7 +232,7 @@ function init() {
       content: $("#menu").get(0)
     });
     Map.addControl(menu);
-  
+   
     // Toggle control to show/hide the menu
     var tog = new ol.control.Toggle({
       html: '<i class="fa fa-bars"></i>',
@@ -226,29 +262,36 @@ function init() {
   // Displaying and Accessing feature on Select event.
   var displayFeatureInfo = function (pixel) {
     var features = [];
+
     Map.forEachFeatureAtPixel(pixel, function (feature, layer) {
-      // console.log(feature);
+      // console.log(layer.get("name"));
       features.push(feature);
-    },
-      // filtering layers according to its properties
-      {
-        layerFilter: function (layerCandidate) {
-          // console.log(layerCandidate.get("name"));
-          return layerCandidate.get("name") === "mh_district"
+
+      // Displaying District information
+      if (layer.get("name") === 'mh_district') {
+        var container = document.getElementById('information');
+        // 
+        if (features.length > 0) {
+          var info = [];
+          for (var i = 0, length = features.length; i < length; ++i) {
+            info.push(features[i].get('dtmname'));
+          }
+          container.innerHTML = info.join(', ') || '(unknown)';
+        } else {
+          container.innerHTML = '&nbsp;';
         }
       }
+    },
+      // filtering layers according to its properties
+      // {
+      //   layerFilter: function (layerCandidate) {
+      //     // console.log(layerCandidate.get("name"));
+      //     return layerCandidate.get("name") === "mh_district"
+      //   }
+      // }
     );
 
-    var container = document.getElementById('information');
-    if (features.length > 0) {
-      var info = [];
-      for (var i = 0, length = features.length; i < length; ++i) {
-        info.push(features[i].get('dtmname'));
-      }
-      container.innerHTML = info.join(', ') || '(unknown)';
-    } else {
-      container.innerHTML = '&nbsp;';
-    }
+
   };
 
 
@@ -291,13 +334,13 @@ function init() {
     url: "http://localhost:3000/mh_district?f=tilegeojson",
     crossOrigin: 'anonymous',
   });
-
+  
   const mh_districMVT = new ol.layer.Tile({
     name: 'mh_district',
     source: mh_districtTile,
     visible: false,
   });
-*/
+  */
 
   // Adding Layer to Map
   // Map.addLayer(mh_districMVT);
