@@ -147,7 +147,7 @@ function init() {
       ? (src = './assets/icon/icon.svg', color = [255, 0, 0])
       : structure_type === 'CNB'
         ? (src = './assets/icon/icon.svg', color = [0, 255, 0])
-        : (src = './assets/icon/dots.svg', color = [0, 0, 255, 0.5]);
+        : (src = './assets/icon/station.svg', color = [255, 0, 0,]);
 
     // defining custom style
     const style = new ol.style.Style({
@@ -157,7 +157,7 @@ function init() {
         src: src,
         color: color,
       }),
-      
+
 
       // We can also use RegularShape style from ol
 
@@ -176,7 +176,7 @@ function init() {
       //   angle: 0,
       // })
     });
-    
+
     return style
   };
   const nrmProjectVector = new ol.layer.Vector({
@@ -186,7 +186,7 @@ function init() {
     style: nrmProjectLocStyle,
   });
 
-  
+
   // Adding Layer to Map
   Map.addLayer(nrmProjectVector);
 
