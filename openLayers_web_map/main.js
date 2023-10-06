@@ -182,7 +182,7 @@ function init() {
   const nrmProjectVector = new ol.layer.Vector({
     name: 'NRM Project Locations',
     source: nrmProjectVectorSource,
-    visible: true,
+    visible: false,
     style: nrmProjectLocStyle,
   });
 
@@ -240,6 +240,58 @@ function init() {
 
   // Adding Layer to Map
   Map.addLayer(mh_districtVector);
+
+  // Point layer of weather
+  /*
+Query =
+`SELECT id, lat, lon, district, taluka, rain_circle, rain_year, 
+  for_date::text, daily_rain, 
+  daily_temp_min, daily_temp_max, daily_rh_min, daily_rh_max, daily_wind_max, 
+  ST_SetSRID(ST_MakePoint(lon, lat), 4326) AS geom
+    FROM weather.skymet_data_daily
+`
+*/
+const CQL_FILTER = "2020-06-01";
+const weatherLayerSource = new ol.source.Vector({
+  // url: `http://localhost:8080/geoserver/Dashboard/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Dashboard%3Aweather_layer&outputFormat=application%2Fjson&CQL_FILTER="for_date"='${CQL_FILTER}'`,
+  url: './assets/data/weatherLayer.geojson',
+  crossOrigin: 'anonymous',
+  projection: 'EPSG:4326',
+  format: new ol.format.GeoJSON(),
+});
+
+const weatherLayerStyle = (feature) => {
+  // console.log(feature);
+  var daily_rain = feature.get("daily_rain");
+  // dynamic icon & color depending upon properties
+  (daily_rain <= 5)
+    ? (src = './assets/icon/station.svg', color = [0, 0, 255])
+    : daily_rain <= 10
+      ? (src = './assets/icon/station.svg', color = [0, 255, 0])
+      : (src = './assets/icon/station.svg', color = [255, 0, 0,]);
+
+  // defining custom style
+  const style = new ol.style.Style({
+    image: new ol.style.Icon({
+      opacity: 1,
+      scale: .4,
+      src: src,
+      color: color,
+    }),
+  });
+
+  return style
+};
+const weatherLayerVector = new ol.layer.Vector({
+  name: 'weatherLayer',
+  source: weatherLayerSource,
+  visible: true,
+  style: weatherLayerStyle
+});
+
+// Adding Layer to Map
+Map.addLayer(weatherLayerVector);
+
 
   /* 
     // Overlay (Display an overlay with a content on the map)
