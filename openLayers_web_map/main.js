@@ -7,7 +7,7 @@ function init() {
   const SearchFeature = new ol.control.SearchFeature();
   // Overview map
   const overViewMapControl = new ol.control.OverviewMap({
-    collapsed: true,
+    collapsed: false,
     // label: '<i class="fa-solid fa-angles-left"></i>',
     collapseLabel: '\u00BB',
     label: '\u00AB',
@@ -22,26 +22,18 @@ function init() {
     collapsible: true,
   })
 
-
   // Initiating Map
   const extent = [72, 15, 82, 23];
 
   const Map = new ol.Map({
     view: new ol.View({
-      center: [76, 20], // X,Y
-      zoom: 6.5,
+      center: [0, 48], // X,Y
+      zoom: 9,
       // rotation: 0.1,
       projection: 'EPSG:4326',
       // You can not pan-out beyond defined extent area
-      extent: extent,
-    }),
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.OSM(),
-        zIndex: 1,
-        visible: false,
-      })
-    ],
+      // extent: extent,
+    }),    
     target: 'js-map',
     KeyboardEventTarget: document,
     // change of expression in V7
@@ -63,7 +55,7 @@ function init() {
         }),
         zIndex: 0,
         visible: true,
-        extent: extent,
+        // extent: extent,
       }),
       // Bing Maps Base Layer
       // new ol.layer.Tile({
@@ -111,7 +103,7 @@ function init() {
     // console.log(evt)
     let parser = new ol.format.GeoJSON();
     let drawnFeatures = parser.writeFeatures([evt.feature]); //parser.writeFeaturesObject([evt.feature]);
-    console.log(drawnFeatures);
+    // console.log(drawnFeatures);
     // Map.addLayer(drawnFeatures);
   });
 
@@ -243,19 +235,18 @@ function init() {
 
   // Point layer of weather
   /*
-Query =
-`SELECT id, lat, lon, district, taluka, rain_circle, rain_year, 
-  for_date::text, daily_rain, 
-  daily_temp_min, daily_temp_max, daily_rh_min, daily_rh_max, daily_wind_max, 
-  ST_SetSRID(ST_MakePoint(lon, lat), 4326) AS geom
-    FROM weather.skymet_data_daily
-`
-*/
-const CQL_FILTER = "2020-06-01";
+    Query =
+    `SELECT id, lat, lon, district, taluka, rain_circle, rain_year, 
+      for_date::text, daily_rain, 
+      daily_temp_min, daily_temp_max, daily_rh_min, daily_rh_max, daily_wind_max, 
+      ST_SetSRID(ST_MakePoint(lon, lat), 4326) AS geom
+        FROM weather.skymet_data_daily`
+  */
+const CQL_FILTER = "2020-07-02";
 const weatherLayerSource = new ol.source.Vector({
-  // url: `http://localhost:8080/geoserver/Dashboard/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Dashboard%3Aweather_layer&outputFormat=application%2Fjson&CQL_FILTER="for_date"='${CQL_FILTER}'`,
-  url: './assets/data/weatherLayer.geojson',
-  crossOrigin: 'anonymous',
+  url : `http://gis.mahapocra.gov.in/geoserver/PoCRA_Dashboard/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=PoCRA_Dashboard%3AweatherLayer&outputFormat=application%2Fjson&CQL_FILTER="for_date"='${CQL_FILTER}'`,  
+  // url: './assets/data/weatherLayer.geojson',
+  // crossOrigin: 'anonymous',
   projection: 'EPSG:4326',
   format: new ol.format.GeoJSON(),
 });
@@ -265,27 +256,44 @@ const weatherLayerStyle = (feature) => {
   var daily_rain = feature.get("daily_rain");
   // dynamic icon & color depending upon properties
   (daily_rain <= 5)
-    ? (src = './assets/icon/station.svg', color = [0, 0, 255])
+    ? (src = 'https://openweathermap.org/img/wn/10d@2x.png', color = [0, 0, 255])
     : daily_rain <= 10
       ? (src = './assets/icon/station.svg', color = [0, 255, 0])
       : (src = './assets/icon/station.svg', color = [255, 0, 0,]);
 
   // defining custom style
-  const style = new ol.style.Style({
+  const weatherStationStyle = new ol.style.Style({
     image: new ol.style.Icon({
       opacity: 1,
       scale: .4,
       src: src,
       color: color,
+    }),   
+    // image: new ol.style.FontSymbol({
+    //   glyph: "fa-cloud-sun-rain",
+    //   fontStyle: '900',
+    //   text:'FAWs',   
+    //   radius: 10,
+    //   color: color,
+    // }),
+    text: new ol.style.Text({
+      text: feature.get('daily_rain'), //.toString(),
+        font: 'bold 18px sans-serif',
+        fill: new ol.style.Fill({
+          color: '#fff'
+        })
     }),
   });
 
-  return style
+  // return weatherStationStyle
+  let geomType = feature.getGeometry().getType();
+  if(geomType ==='Point'){feature.setStyle([weatherStationStyle]);}
+  
 };
 const weatherLayerVector = new ol.layer.Vector({
   name: 'weatherLayer',
   source: weatherLayerSource,
-  visible: true,
+  visible: false,
   style: weatherLayerStyle
 });
 
@@ -293,6 +301,55 @@ const weatherLayerVector = new ol.layer.Vector({
 Map.addLayer(weatherLayerVector);
 
 
+// Demo GeoJSON Layer
+const fond_guerreSource = new ol.source.Vector({  
+  url: './assets/data/fond_guerre.geojson',  
+  projection: 'EPSG:4326',
+  format: new ol.format.GeoJSON(),
+});
+
+const fond_guerreStyle = (feature) => {
+  // console.log(feature);
+  var dep = feature.get("dep");  
+  // dynamic icon & color depending upon properties  
+  (dep <= 5)
+    ? (src = './assets/icon/station.svg', color = [0, 0, 255])
+    : dep <= 10
+      ? (src = './assets/icon/station.svg', color = [0, 255, 0])
+      : (src = './assets/icon/station.svg', color = [255, 0, 0,]);
+  
+  // defining custom style
+  const style = new ol.style.Style({
+    image: new ol.style.FontSymbol({
+      glyph: "fa-cloud-sun-rain",
+      fontStyle: '900',
+      text:'FAWs',   
+      radius: 15,
+      color: color,
+    }),
+    text: new ol.style.Text({
+      text: `${feature.get('dep')} mm`, //.toString(),
+        font: 'bold 18px sans-serif',
+        fill: new ol.style.Fill({
+          color: '#000'
+        }),
+        textAlign: 'left',
+        textBaseline: 'bottom',
+        offsetX: 10,
+    })
+  });
+
+  return style
+};
+
+const fond_guerreVector = new ol.layer.Vector({
+  name: 'fond_guerre',
+  source: fond_guerreSource,
+  visible: true,
+  style: fond_guerreStyle
+});
+// Adding Layer to Map
+Map.addLayer(fond_guerreVector);
   /* 
     // Overlay (Display an overlay with a content on the map)
     var menu = new ol.control.Overlay({

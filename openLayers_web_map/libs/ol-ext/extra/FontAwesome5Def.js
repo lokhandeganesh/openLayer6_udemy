@@ -677,5 +677,6 @@ ol.style.FontSymbol.addDefs({
   "fa-houzz": "\uf27c",
   "fa-vimeo": "\uf27d",
   "fa-black-tie": "\uf27e",
-  "fa-fonticons": "\uf280"
+  "fa-fonticons": "\uf280",
+  "fa-cloud-sun-rain":"\uf743"
 });
