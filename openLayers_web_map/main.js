@@ -27,8 +27,8 @@ function init() {
 
   const Map = new ol.Map({
     view: new ol.View({
-      center: [0, 48], // X,Y
-      zoom: 9,
+      center: [77, 19], // X,Y
+      zoom: 7,
       // rotation: 0.1,
       projection: 'EPSG:4326',
       // You can not pan-out beyond defined extent area
@@ -40,7 +40,7 @@ function init() {
     controls: ol.control.defaults.defaults({
       zoom: true,
       attribution: false,
-      rotate: false
+      rotate: true
     })
       // Adding new external controls on map
       .extend([SearchFeature, overViewMapControl, attributionControl]),
@@ -226,7 +226,7 @@ function init() {
   const mh_districtVector = new ol.layer.Vector({
     name: 'mh_district',
     source: mh_districtSource,
-    visible: false,
+    visible: true,
     style: mh_districtVectorStyle,
   });
 
@@ -347,7 +347,7 @@ function init() {
   const fond_guerreVector = new ol.layer.Vector({
     name: 'fond_guerre',
     source: fond_guerreSource,
-    visible: true,
+    visible: false,
     style: fond_guerreStyle
   });
   // Adding Layer to Map
@@ -436,8 +436,10 @@ function init() {
       // console.log(prop['dtncode']);
     }
   })
-
-
+  // Remove container if no feature is present
+  selectIn.getFeatures().on('remove', function (e) {
+    $("#information").html("");
+  });
   /*
    // On selected => show/hide popup
    selectIn.getFeatures().on('add', function (e) {
@@ -453,6 +455,33 @@ function init() {
      $(".data").html("");
    });
   */
+
+  // Adding Mouse Pointer Mover (condition: ol.events.condition.pointerMove) Interaction
+  // Custom style for pointer move
+  const pointerMoveStyle = (feature, resolution) => {
+    // console.log(feature);
+
+    var customStyle =
+      new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: 'red'
+        })
+      });
+
+    return customStyle;
+  };
+  // Interaction
+  var pointerMoveIn = new ol.interaction.Select({
+    // hitTolerance: 5,  
+    condition: ol.events.condition.pointerMove,
+    layers: function (layer) {
+      return layer.get('name') === 'mh_district'
+    },
+    style: pointerMoveStyle,
+  });
+
+  // Adding Interaction to Map
+  Map.getInteractions().extend([pointerMoveIn]);
 
   // Tile Json of Vector 
   /* 
