@@ -24,16 +24,25 @@ function init() {
 
   // Initiating Map
   const extent = [72, 15, 82, 23];
+  var mahaCenter = [77.5, 18.95];
+
+  // Map View
+  const view = new ol.View({
+    center: [72, 19],
+    zoom: 6,
+    projection: 'EPSG:4326',
+  });
 
   const Map = new ol.Map({
-    view: new ol.View({
-      center: [77, 19], // X,Y
-      zoom: 7,
-      // rotation: 0.1,
-      projection: 'EPSG:4326',
-      // You can not pan-out beyond defined extent area
-      // extent: extent,
-    }),
+    view: view,
+    // view: new ol.View({
+    //   center: [72, 19], // X,Y
+    //   zoom: 6,
+    //   // rotation: 0.1,
+    //   projection: 'EPSG:4326',
+    //   // You can not pan-out beyond defined extent area
+    //   // extent: extent,
+    // }),
     target: 'js-map',
     KeyboardEventTarget: document,
     // change of expression in V7
@@ -232,7 +241,25 @@ function init() {
 
   // Adding Layer to Map
   Map.addLayer(mh_districtVector);
+  mh_districtVector.getSource().on("featuresloadend", function (evt) {
+    // var feature = mh_districtVector.getSource().getExtent();
+    // console.log(feature)
+    // Map.setCenter(mahaCenter, 5);
+    // Map.getView().fit(feature, Map.getSize());
 
+    // Adding view animation
+    view.animate({
+      center: mahaCenter,
+      duration: 2000,
+      zoom: 7
+    });
+  });
+
+  // selectFeatureAndFit(feature);
+
+  // Map.getView().fit(mh_districtVector.getGeometry().getExtent(), {
+  //   duration: 5000
+  // });
   // Point layer of weather
   /*
     Query =
@@ -378,9 +405,7 @@ function init() {
     // condition: ol.events.condition.pointerMove
   });
 
-  // Vector features can be Selected on MouseClick
-  // Map.addInteraction(selectIn);
-  Map.getInteractions().extend([selectIn]);
+
 
   // Select Feature When event occurs, possible event can be one of the below
   // [DblClickDragZoom, DoubleClickZoom, DragAndDrop, KeyboardPan,
@@ -425,21 +450,32 @@ function init() {
     // console.log(evt)
     var pixel = evt.mapBrowserEvent.pixel;
     // Passing value to function
+    // document.getElementById('information')
     displayFeatureInfo(pixel);
     // OR
 
     // Selection of features
     var feature = evt.selected[0];
-    // console.log(feature)
+    console.log(feature);
+
+    // checking condition if feature present or not
     if (feature) {
       var prop = feature.getProperties();
       // console.log(prop['dtncode']);
     }
   })
+
   // Remove container if no feature is present
   selectIn.getFeatures().on('remove', function (e) {
+    // document.getElementById('information')
     $("#information").html("");
   });
+
+  // Vector features can be Selected on MouseClick
+  // Map.addInteraction(selectIn);
+
+  Map.getInteractions().extend([selectIn]);
+
   /*
    // On selected => show/hide popup
    selectIn.getFeatures().on('add', function (e) {
@@ -461,14 +497,21 @@ function init() {
   const pointerMoveStyle = (feature, resolution) => {
     // console.log(feature);
 
-    var customStyle =
+    var customPointerMoveStyle =
       new ol.style.Style({
         fill: new ol.style.Fill({
           color: 'red'
-        })
+        }),
+        // text: new ol.style.Text({
+        //   text: feature.get('dtmname'), //.toString(),
+        //   font: 'bold 10px sans-serif',
+        //   fill: new ol.style.Fill({
+        //     color: '#fff'
+        //   })
+        // }),
       });
 
-    return customStyle;
+    return customPointerMoveStyle;
   };
   // Interaction
   var pointerMoveIn = new ol.interaction.Select({
