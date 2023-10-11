@@ -12,6 +12,7 @@
       integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="css/all_font-awesome.min.css">
     <style>
       #windy {
         width: 100%;
@@ -21,25 +22,24 @@
   </head>
   <body>
     <div id="windy"></div>
-    <div class="md-4 table-wrapper show notap svelte-7pvycl">
-      <div class="data-table flex-container svelte-7pvycl">
-        <div class="flex-row svelte-7pvycl">
+    <div class="md-4">
+      <div class="data-table flex-container">
+        <div class="flex-row">
           <div
-            class="forecast-table grab svelte-15u5o7p"
-            style="height: 182px; min-width: 1380px"
+            class="forecast-table"
           >
-            <table id="detail-data-table" style="width: 1380px">
+            <table id="forecast-data-table" style="width: 800px;">
               <tbody>
-                <tr class="td-days height-days">
+                <tr class="td-days ">
                   <td>
-                    <span class="legend-left"></span>Day & Date<span
-                      class="legend-right"
-                    ></span>
+                    <span class="legend-left">Day & Date</span>
+                    <span class="legend-right">
+                      <i class="fa-regular fa-calendar-days"></i>
+                    </span>
                   </td>
                   <td
                     class="sticky-title-wrapper"
-                    data-day="2023-10-11"
-                    colspan="1"
+                    data-day="2023-10-11"                    
                   >
                     <div class="sticky-title" data-daydiv="2023-10-11">
                       Wednesday 11
@@ -47,8 +47,7 @@
                   </td>
                   <td
                     class="sticky-title-wrapper"
-                    data-day="2023-10-12"
-                    colspan="1"
+                    data-day="2023-10-12"                    
                   >
                     <div class="sticky-title" data-daydiv="2023-10-12">
                       Thursday 12
@@ -56,8 +55,7 @@
                   </td>
                   <td
                     class="sticky-title-wrapper"
-                    data-day="2023-10-13"
-                    colspan="1"
+                    data-day="2023-10-13"                    
                   >
                     <div class="sticky-title" data-daydiv="2023-10-13">
                       Friday 13
@@ -65,8 +63,7 @@
                   </td>
                   <td
                     class="sticky-title-wrapper"
-                    data-day="2023-10-14"
-                    colspan="1"
+                    data-day="2023-10-14"                    
                   >
                     <div class="sticky-title" data-daydiv="2023-10-14">
                       Saturday 14
@@ -74,15 +71,14 @@
                   </td>
                   <td
                     class="sticky-title-wrapper"
-                    data-day="2023-10-15"
-                    colspan="1"
+                    data-day="2023-10-15"                    
                   >
                     <div class="sticky-title" data-daydiv="2023-10-15">
                       Sunday 15
                     </div>
                   </td>
                 </tr>
-                <tr class="td-icon height-icon d-display-table">
+                <tr class="td-icon">
                   <td></td>
                   <td>
                     <img
@@ -115,13 +111,12 @@
                     />
                   </td>
                 </tr>
-                <tr class="td-temp height-temp d-display-table">
+                <tr class="td-tempMax">
                   <td>
-                    <span class="legend-left">Temperature</span
-                    ><span
-                      data-do="metric,temp"
+                    <span class="legend-left">Temp. Max</span
+                    ><span                      
                       class="legend-right metric-clickable"
-                      >°C</span
+                      > (°C) <i class="fa-solid fa-temperature-high"></i></span
                     >
                   </td>
                   <td class="day-end">22°</td>
@@ -130,99 +125,40 @@
                   <td class="day-end">21°</td>
                   <td class="day-end">21°</td>
                 </tr>
-                <tr class="td-rain height-rain d-display-table">
+                <tr class="td-tempMin">
+                  <td>
+                    <span class="legend-left">Temp. Min</span
+                    ><span
+                      class="legend-right"
+                      > (°C) <i class="fa-solid fa-temperature-low"></i></span
+                    >
+                  </td>
+                  <td> 4 </td>
+                  <td> 2 </td>
+                  <td> 2 </td>
+                  <td> 3 </td>
+                  <td> 0 </td>
+                </tr>
+                <tr class="td-rain">
                   <td>
                     <span class="legend-left">Rainfall</span
-                    ><span
-                      data-do="metric,temp"
+                    ><span                      
                       class="legend-right metric-clickable"
-                      >(mm)</span
+                      > (mm) <i class="fa-solid fa-cloud-rain"></i></span
                     >
                   </td>
-                  <td class="day-end"></td>
-                  <td class="day-end"></td>
-                  <td class="day-end"></td>
-                  <td class="day-end"></td>
-                  <td class="day-end"></td>
+                  <td class="day-end">1</td>
+                  <td class="day-end">2</td>
+                  <td class="day-end">3</td>
+                  <td class="day-end">4</td>
+                  <td class="day-end">5</td>
                 </tr>
-                <tr class="td-wind height-wind d-display-table">
+                <tr class="td-windSpeed">
                   <td>
-                    <span class="legend-left">Temperature</span
-                    ><span
-                      data-do="metric,temp"
-                      class="legend-right metric-clickable"
-                      >°C</span
-                    >
-                  </td>
-                  <td
-                    style="
-                      background: linear-gradient(
-                        to right,
-                        rgb(244, 244, 244),
-                        rgb(244, 244, 244),
-                        rgb(244, 244, 244)
-                      );
-                    "
-                  >
-                    4
-                  </td>
-                  <td
-                    class="day-end"
-                    style="
-                      background: linear-gradient(
-                        to right,
-                        rgb(244, 244, 244),
-                        rgb(244, 244, 244),
-                        rgb(244, 244, 244)
-                      );
-                    "
-                  >
-                    2
-                  </td>
-                  <td
-                    style="
-                      background: linear-gradient(
-                        to right,
-                        rgb(244, 244, 244),
-                        rgb(244, 244, 244),
-                        rgb(244, 244, 244)
-                      );
-                    "
-                  >
-                    2
-                  </td>
-                  <td
-                    style="
-                      background: linear-gradient(
-                        to right,
-                        rgb(244, 244, 244),
-                        rgb(244, 244, 244),
-                        rgb(244, 244, 244)
-                      );
-                    "
-                  >
-                    3
-                  </td>
-                  <td
-                    style="
-                      background: linear-gradient(
-                        to right,
-                        rgb(244, 244, 244),
-                        rgb(244, 244, 244),
-                        rgb(244, 244, 244)
-                      );
-                    "
-                  >
-                    0
-                  </td>
-                </tr>
-                <tr class="td-gust height-gust d-display-table">
-                  <td>
-                    <span class="legend-left">Temperature</span
-                    ><span
-                      data-do="metric,temp"
-                      class="legend-right metric-clickable"
-                      >°C</span
+                    <span class="legend-left">Wind</span
+                    ><span                      
+                      class="legend-right"
+                      > (m/s) <i class="fa-solid fa-wind"></i></span
                     >
                   </td>
                   <td
@@ -239,71 +175,73 @@
                   </td>
 
                   <td
-                    style="
-                      background: linear-gradient(
-                        to right,
-                        rgb(118, 222, 250),
-                        rgb(23, 205, 254),
-                        rgb(213, 239, 245)
-                      );
-                    "
+                  style="
+                  background: linear-gradient(
+                    to right,
+                    rgb(0, 211, 224),
+                    rgb(0, 224, 172),
+                    rgb(23, 205, 254)
+                  );
+                "
                   >
                     8
                   </td>
                   <td
-                    style="
-                      background: linear-gradient(
-                        to right,
-                        rgb(213, 239, 245),
-                        rgb(244, 244, 244),
-                        rgb(244, 244, 244)
-                      );
-                    "
+                  style="
+                  background: linear-gradient(
+                    to right,
+                    rgb(0, 211, 224),
+                    rgb(0, 224, 172),
+                    rgb(23, 205, 254)
+                  );
+                "
                   >
                     5
                   </td>
                   <td
-                    style="
-                      background: linear-gradient(
-                        to right,
-                        rgb(244, 244, 244),
-                        rgb(118, 222, 250),
-                        rgb(118, 222, 250)
-                      );
-                    "
+                  style="
+                  background: linear-gradient(
+                    to right,
+                    rgb(0, 211, 224),
+                    rgb(0, 224, 172),
+                    rgb(23, 205, 254)
+                  );
+                "
                   >
                     7
                   </td>
                   <td
-                    style="
-                      background: linear-gradient(
-                        to right,
-                        rgb(244, 244, 244),
-                        rgb(118, 222, 250),
-                        rgb(118, 222, 250)
-                      );
-                    "
+                  style="
+                  background: linear-gradient(
+                    to right,
+                    rgb(0, 211, 224),
+                    rgb(0, 224, 172),
+                    rgb(23, 205, 254)
+                  );
+                "
                   >
                     7
                   </td>
                 </tr>
-                <tr class="td-windDir height-windDir d-display-table">
+                <tr class="td-windDir">
                   <td>
-                    <span class="legend-left">Temperature</span
+                    <span class="legend-left">Wind Dir.</span
                     ><span
-                      data-do="metric,temp"
-                      class="legend-right metric-clickable"
-                      >°C</span
-                    >
+                      class="legend-right"
+                      > <i class="fa-solid fa-flag"></i></span
+                    >                    
                   </td>
                   <td>
                     <div
                       style="
-                        transform: rotate(1deg);
-                        -webkit-transform: rotate(1deg);
+                      transform: rotate(-30deg);
+                        -webkit-transform: rotate(-30deg);
+                        margin: 0;
+                    padding: 0;
+                    text-align: center;
                       "
                     >
-                      4
+                    <i class="fa-solid fa-right-long"></i>                    
                     </div>
                   </td>
                   <td>
