@@ -5,21 +5,33 @@ function init() {
   // adding Controls
   // Search by attributes of layer
   const SearchFeature = new ol.control.SearchFeature();
+  
   // Overview map
+  // custom label
+  var expandSpan = document.createElement("span");  
+  expandSpan.className = "fa fa-expand";
+  // 
   const overViewMapControl = new ol.control.OverviewMap({
-    collapsed: false,
-    // label: '<i class="fa-solid fa-angles-left"></i>',
+    collapsed: false,    
     collapseLabel: '\u00BB',
-    label: '\u00AB',
+    // label: '\u00AB',
+    label: expandSpan,
     layers: [
       new ol.layer.Tile({
         source: new ol.source.OSM()
       })
     ],
   });
-  // 
+  // Attribution on Map
   const attributionControl = new ol.control.Attribution({
     collapsible: true,
+  })
+
+  // Scale Line control
+  const scaleLineControl = new ol.control.ScaleLine({
+    // className: 'ol-scale-line',
+    bar: true,
+    minWidth: 100,
   })
 
   // Initiating Map
@@ -52,7 +64,7 @@ function init() {
       rotate: true
     })
       // Adding new external controls on map
-      .extend([SearchFeature, overViewMapControl, attributionControl]),
+      .extend([SearchFeature, overViewMapControl, attributionControl, scaleLineControl]),
   })
 
   // LayerGroups
