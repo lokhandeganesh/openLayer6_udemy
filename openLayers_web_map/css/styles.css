@@ -11,32 +11,43 @@ body {
   width: auto;
   height: 700px;
 }
+/* For forecast table */
+#forecast-data-table td {
+  /* text-align: center; */
+}
 
+#forecast-data-table .header-left {
+  /* text-align: left; */
+}
+
+span {
+  /* display: block; */
+}
 /* Custom Control Styling */
-.ol-control button{
+.ol-control button {
   background-color: red;
   /* background-color: red !important; */
   font-size: x-large;
 }
-.ol-control button:hover{
+.ol-control button:hover {
   background-color: blue;
   /* background-color: red !important; */
 }
 
-.ol-control button:focus{
+.ol-control button:focus {
   background-color: green;
   /* background-color: red !important; */
 }
 
-.ol-zoom{
+.ol-zoom {
   left: unset;
   right: 15px;
 }
 
-.ol-overviewmap{
+.ol-overviewmap {
   bottom: 2.5em;
 }
 
-.ol-scale-bar{
+.ol-scale-bar {
   margin-left: 1px;
 }
