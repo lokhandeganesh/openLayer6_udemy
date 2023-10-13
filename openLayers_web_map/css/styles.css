@@ -39,9 +39,12 @@ span {
   /* background-color: red !important; */
 }
 
+.ol-control.ol-select {
+  left: 6em;
+}
 .ol-zoom {
   left: unset;
-  right: 15px;
+  right: 1em;
 }
 
 .ol-overviewmap {

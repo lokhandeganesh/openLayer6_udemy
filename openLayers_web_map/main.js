@@ -1,18 +1,18 @@
-// window.onload = init
+window.onload = init
 
 
 function init() {
   // adding Controls
   // Search by attributes of layer
   const SearchFeature = new ol.control.SearchFeature();
-  
+
   // Overview map
   // custom label
-  var expandSpan = document.createElement("span");  
+  var expandSpan = document.createElement("span");
   expandSpan.className = "fa fa-expand";
   // 
   const overViewMapControl = new ol.control.OverviewMap({
-    collapsed: false,    
+    collapsed: false,
     collapseLabel: '\u00BB',
     // label: '\u00AB',
     label: expandSpan,
@@ -33,6 +33,12 @@ function init() {
     bar: true,
     minWidth: 100,
   })
+
+  // Zoom Contrl
+  const zoomControl = new ol.control.Zoom({});
+
+  // All controls to extending on Map
+  const mapControls = [SearchFeature, overViewMapControl, attributionControl, scaleLineControl, zoomControl]
 
   // Initiating Map
   const extent = [72, 15, 82, 23];
@@ -64,7 +70,7 @@ function init() {
       rotate: true
     })
       // Adding new external controls on map
-      .extend([SearchFeature, overViewMapControl, attributionControl, scaleLineControl]),
+      .extend(mapControls),
   })
 
   // LayerGroups
@@ -247,7 +253,7 @@ function init() {
   const mh_districtVector = new ol.layer.Vector({
     name: 'mh_district',
     source: mh_districtSource,
-    visible: true,
+    visible: false,
     style: mh_districtVectorStyle,
   });
 
@@ -557,6 +563,7 @@ function init() {
 
 
   // Select (by Attributes) Control on Map
+
   const SelectCtl = new ol.control.Select({
     source: mh_districtSource,
   });
@@ -581,6 +588,7 @@ function init() {
     // copy: false,
     // pdf: false
   });
+  // 
   printControl.setSize('A4');
   Map.addControl(printControl);
 
@@ -608,5 +616,48 @@ function init() {
       console.warn('No canvas to export');
     }
   });
+
+
+  // Switch On/Off Controls
+  const controlButtonElements = document.querySelectorAll('.map-controls-custom > button[type=button]');
+
+  for (let controlButton of controlButtonElements) {
+    controlButton.addEventListener('click', function (evt) {
+      let buttonElement = evt.target;
+      // console.log(evt);
+      // console.log(buttonElement.id);
+
+      if (buttonElement.className.includes("btn-success")) {
+        // console.log(Map.getControls());
+
+        Map.getControls().forEach(function (controlElement) {
+          // console.log(controlElement);
+          // console.log(ol.control);
+
+          if (controlElement instanceof ol.control[buttonElement.id]) {
+            // console.log(controlElement);
+            Map.removeControl(controlElement)
+          }
+        });
+        // Changing style button element clicked
+        buttonElement.className = buttonElement.className.replace('btn-success', 'btn-default');
+      } else {
+        // Restoring Control
+
+        // console.log(Map.getControls())
+        mapControls.forEach(function (controlElement) {
+          // console.log(controlElement);
+          if (controlElement instanceof ol.control[buttonElement.id]) {
+            // console.log(controlElement);
+            Map.addControl(controlElement)
+          }
+
+        });
+        // Changing style button element clicked
+        buttonElement.className = buttonElement.className.replace('btn-default', 'btn-success');
+      }
+    });
+  };
+
 
 }
