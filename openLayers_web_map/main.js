@@ -201,7 +201,7 @@ function init() {
   const nrmProjectVector = new ol.layer.Vector({
     name: 'NRM Project Locations',
     source: nrmProjectVectorSource,
-    visible: false,
+    visible: true,
     style: nrmProjectLocStyle,
   });
 
@@ -435,7 +435,7 @@ function init() {
     var features = [];
 
     Map.forEachFeatureAtPixel(pixel, function (feature, layer) {
-      // console.log(layer.get("name"));      
+      // console.log(layer.get("name"));
       features.push(feature);
 
       // Displaying District information
@@ -451,6 +451,10 @@ function init() {
         } else {
           container.innerHTML = '&nbsp;';
         }
+      }
+      // For NRM Project location layer
+      else if (layer.get("name") === 'NRM Project Locations') {
+        console.log("NRM Locations")
       }
     },
       // filtering layers according to its properties
@@ -474,7 +478,7 @@ function init() {
 
     // Selection of features
     var feature = evt.selected[0];
-    console.log(feature);
+    // console.log(feature);
 
     // checking condition if feature present or not
     if (feature) {
@@ -565,12 +569,14 @@ function init() {
   // Select (by Attributes) Control on Map
 
   const SelectCtl = new ol.control.Select({
-    source: mh_districtSource,
+    source: nrmProjectVectorSource,
   });
   // 
   Map.addControl(SelectCtl);
   SelectCtl.on('select', function (evt) {
-    console.log(evt)
+    // console.log(evt)
+    var featCenter = evt.features[0].getGeometry().getFirstCoordinate();
+    Map.getView().animate({ center: featCenter, zoom: 9 });
   })
 
   // Changing Cursor Style When feature is present on Map
@@ -659,5 +665,52 @@ function init() {
     });
   };
 
+
+  // Geolocation API 
+  const geolocation = new ol.Geolocation({
+    tracking: true,
+    trackingOptions: {
+      enableHighAccuracy: true,
+    },
+    projection: view.getProjection(),
+  })
+
+  const positionFeature = new ol.Feature();
+  positionFeature.setStyle(
+    new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 6,
+        fill: new ol.style.Fill({
+          color: '#3399CC'
+        })
+      }),
+    })
+  );
+
+  // const positionVector = new ol.layer.Vector({
+  //   name: 'position Vector',
+  //   source: positionFeature,
+  //   visible: true,
+  // });
+
+  // if location change
+  geolocation.on('change:position', (evt) => {
+    // console.log(evt)
+
+    // const coordinates = geolocation.getPosition();
+
+
+    // after change in coords
+    const coordinates = evt.target.getPosition();
+    // Map.getView().setCenter(coordinates);
+
+
+
+    // console.log(positionFeature.getGeometry());
+    // positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+
+  })
+  // Adding Layer to Map
+  // Map.addLayer(positionFeature);
 
 }
