@@ -5,24 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>City Tour Map</title>
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-
+    <!-- JQuery -->
+    <script
+      type="text/javascript"
+      src="./libs/jquery/code.jquery.com_jquery-3.7.1.min.js"
+    ></script>
+    <!-- Openlayer Style -->
+    <link rel="stylesheet" href="./libs/ol/ol.css" />
+    <!-- Openlayer Extension Style -->
+    <link rel="stylesheet" href="./libs/ol-ext/ol-ext.css" />
+    <!-- font awesome -->
+    <link rel="stylesheet" href="./css/all_font-awesome.min.css" />
+    <!-- Bootstrap 5 Style -->
+    <link
+      rel="stylesheet"
+      href="./libs/bootstrap-5.0.2-dist/css/bootstrap.css"
+    />
     <!-- Custom Style -->
     <link rel="stylesheet" href="./css/proj-styles.css" />
   </head>
   <body>
-    <div id="project-map"></div>
-
+    <div class="grid-container">
+      <div class="grid-1">
+        <div class="column-navigation">
+          <a title="Home" id="Home" class="active"
+            ><i class="fas fa-home" id="Home"></i
+          ></a>
+          <a title="Perth" id="Perth" class=""
+            ><i class="far fa-circle" id="Perth"></i
+          ></a>
+          <a title="Adelaide" id="Adelaide" class=""
+            ><i class="far fa-circle" id="Adelaide"></i
+          ></a>
+          <a title="Melbourne" id="Melbourne" class=""
+            ><i class="far fa-circle" id="Melbourne"></i
+          ></a>
+          <a title="Brisbane" id="Brisbane" class=""
+            ><i class="far fa-circle" id="Brisbane"></i
+          ></a>
+          <a title="Darwin" id="Darwin" class=""
+            ><i class="far fa-circle" id="Darwin"></i
+          ></a>
+          <a title="Hobart" id="Hobart" class=""
+            ><i class="far fa-circle" id="Hobart"></i
+          ></a>
+          <a title="Sydney" id="Sydney" class=""
+            ><i class="far fa-circle" id="Sydney"></i
+          ></a>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="column-map" id="project-map"></div>
+      </div>
+      <div class="grid-3">
+        <div class="column-menu" id="menu-information">
+          <p id="cityname">Welcome to Australian Capital Cities Tour Map</p>
+          <img
+            id="cityimage"
+            src="./assets/project-data/City_images/Australian_Flag.jpg"
+            alt="Aus-Flag"
+          />
+        </div>
+      </div>
+    </div>
     <!-- Adding OpenLayer library -->
     <script src="./libs/ol/dist/ol.js"></script>
     <!-- Adding OpenLayer Extention -->
     <script src="./libs/ol-ext/ol-ext.js"></script>
+    <!-- font awesome -->
     <script
       type="text/javascript"
       src="./libs/ol-ext/extra/FontAwesome5Def.js"
     ></script>
     <!-- Bootstrap 5 JS -->
     <script src="./libs/bootstrap-5.0.2-dist/js/bootstrap.js"></script>
+
     <!-- Custom js file -->
+    <script src="./constants.js"></script>
     <script src="./project.js"></script>
   </body>
 </html>

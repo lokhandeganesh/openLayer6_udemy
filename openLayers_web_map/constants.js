@@ -1,0 +1,1 @@
+const IMAGE_PATH = './assets/project-data/City_images';
