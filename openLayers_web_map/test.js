@@ -1,3 +1,4 @@
+// Windy API details
 window.onload = init
 
 function init() {
